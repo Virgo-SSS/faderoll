@@ -157,9 +157,19 @@ Provide an all-in-one solution for managing barbershop operations including:
 - **Language**: TypeScript
 - **UI Library**: React 19
 - **Styling**: Tailwind CSS v4
-- **UI Components**: Lucide React icons, Class Variance Authority
+- **UI Components**: Shadcn UI (Radix UI + Tailwind CSS), Lucide React icons, Class Variance Authority
 
 ### Architecture Patterns
+
+#### Flexible Atomic Design
+The project follows a **Flexible Atomic Design** methodology. Strict adherence to pure atomic theory is not required; focus on reusability and clarity.
+
+- **UI (Atoms)**: Base components from Shadcn UI (e.g., Button, Input, Card). Located in `src/components/ui`.
+- **Molecules**: Simple combinations of atoms (e.g., SearchInput, UserAvatarWithStatus). Located in `src/components/molecules`.
+- **Organisms**: Complex business widgets or sections (e.g., Header, Sidebar, DataTable, BarberCard). Located in `src/components/organisms`.
+- **Templates**: Page layouts or major structural components. Located in `src/components/templates`.
+
+**Flexibility Rule**: It is acceptable to skip layers (e.g., using an Atom directly in an Organism) if it simplifies the code. Domain-specific features can be grouped in `src/components/features` if they don't fit neatly into the atomic structure, but prefer atomic folders for reusable UI.
 
 #### App Router Structure
 - **Pages**: `src/app/*/page.tsx`
@@ -207,18 +217,6 @@ src/
 ├── app/                    # Application routes (App Router)
 │   ├── (auth)/            # Auth-related routes (grouped)
 │   ├── (dashboard)/       # Dashboard routes (grouped)
-│   ├── api/               # API routes
-│   ├── layout.tsx         # Root layout
-│   ├── page.tsx           # Home page
-│   └── globals.css        # Global styles
-├── components/            # Reusable UI components
-│   ├── ui/               # Base UI components
-│   └── features/         # Feature-specific components
-├── lib/                   # Utility functions and shared logic
-│   ├── utils.ts          # General utilities
-│   ├── db/               # Database utilities
-│   └── validations/      # Zod schemas and validations
-└── types/                 # TypeScript type definitions
 ```
 
 ### TypeScript Conventions
@@ -288,16 +286,38 @@ export interface Booking {
 
 ### Component Patterns
 
-**1. Server Component (Default)**
+**1. Using Shadcn UI Components**
+Always use the `cn()` utility for merging classes when extending Shadcn components.
+
+```tsx
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+
+interface CustomButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  customProp?: string
+}
+
+export function CustomButton({ className, ...props }: CustomButtonProps) {
+  return (
+    <Button 
+      className={cn("bg-brand-500 hover:bg-brand-600", className)} 
+      {...props} 
+    />
+  )
+}
+```
+
+**2. Server Component (Default)**
 ```tsx
 // src/app/barbers/page.tsx
 import { getBarbersFromDB } from '@/lib/db/barbers';
+import { BarberCard } from '@/components/organisms/barber-card';
 
 export default async function BarbersPage() {
   const barbers = await getBarbersFromDB();
   
   return (
-    <div>
+    <div className="grid gap-4">
       {barbers.map(barber => (
         <BarberCard key={barber.id} barber={barber} />
       ))}
@@ -306,25 +326,33 @@ export default async function BarbersPage() {
 }
 ```
 
-**2. Client Component (When Needed)**
+**3. Client Component (When Needed)**
 ```tsx
-// src/components/booking-form.tsx
+// src/components/molecules/booking-form.tsx
 'use client';
 
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 
 export function BookingForm() {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [date, setDate] = useState<Date | undefined>(new Date());
   
   return (
-    <form>
-      {/* Form implementation */}
+    <form className="space-y-4">
+      <Calendar
+        mode="single"
+        selected={date}
+        onSelect={setDate}
+        className="rounded-md border"
+      />
+      <Button type="submit">Book Appointment</Button>
     </form>
   );
 }
 ```
 
-**3. Server Actions for Mutations**
+**4. Server Actions for Mutations**
 ```tsx
 // src/app/actions/booking.ts
 'use server';

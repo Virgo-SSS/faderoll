@@ -3,6 +3,13 @@
 		"github": {
 			"url": "https://api.githubcopilot.com/mcp/",
 			"type": "http"
+		},
+		"shadcn": {
+			"command": "npx",
+			"args": [
+				"shadcn@latest",
+				"mcp"
+			]
 		}
 	},
 	"inputs": []
