@@ -9,7 +9,6 @@ import eslintConfigPrettier from "eslint-config-prettier";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  eslintConfigPrettier,
   ...storybook.configs["flat/recommended"],
   // Override default ignores of eslint-config-next.
   globalIgnores([
@@ -19,6 +18,10 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    ignores: ["!.storybook"],
+  },
+  eslintConfigPrettier,
 ]);
 
 export default eslintConfig;

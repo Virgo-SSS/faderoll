@@ -161,15 +161,13 @@ Provide an all-in-one solution for managing barbershop operations including:
 
 ### Architecture Patterns
 
-#### Flexible Atomic Design
-The project follows a **Flexible Atomic Design** methodology. Strict adherence to pure atomic theory is not required; focus on reusability and clarity.
+#### Component Structure
+The project follows a simplified component structure.
 
-- **UI (Atoms)**: Base components from Shadcn UI (e.g., Button, Input, Card). Located in `src/components/ui`.
-- **Molecules**: Simple combinations of atoms (e.g., SearchInput, UserAvatarWithStatus). Located in `src/components/molecules`.
-- **Organisms**: Complex business widgets or sections (e.g., Header, Sidebar, DataTable, BarberCard). Located in `src/components/organisms`.
-- **Templates**: Page layouts or major structural components. Located in `src/components/templates`.
+- **UI Components (Atoms)**: Base components. Prioritize using Shadcn UI components first; if a suitable component doesn't exist, create a custom atom. Located in `src/components/ui`.
+- **Feature Components**: Other components (Molecules, Organisms, etc.) should be placed directly inside `src/components/` in their own folders (e.g., `src/components/FormInput`, `src/components/IconInput`).
 
-**Flexibility Rule**: It is acceptable to skip layers (e.g., using an Atom directly in an Organism) if it simplifies the code. Domain-specific features can be grouped in `src/components/features` if they don't fit neatly into the atomic structure, but prefer atomic folders for reusable UI.
+**Flexibility Rule**: Domain-specific features can be grouped in `src/components/features` if they don't fit neatly into the general structure, but prefer the flat structure under `src/components/` for reusable components.
 
 #### App Router Structure
 - **Pages**: `src/app/*/page.tsx`
@@ -218,6 +216,11 @@ src/
 │   ├── (auth)/            # Auth-related routes (grouped)
 │   ├── (dashboard)/       # Dashboard routes (grouped)
 ```
+
+**File Naming Convention:**
+- **Use kebab-case** for all file and directory names
+- Examples: `barber-card.tsx`, `booking-form.tsx`, `user-profile.tsx`
+- Apply this convention consistently across components, pages, utilities, and all other files
 
 ### TypeScript Conventions
 
@@ -286,8 +289,23 @@ export interface Booking {
 
 ### Component Patterns
 
-**1. Using Shadcn UI Components**
-Always use the `cn()` utility for merging classes when extending Shadcn components.
+**1. Prefer Function Components**
+Always use function declarations for components instead of arrow functions assigned to variables.
+
+```tsx
+// ❌ Bad
+export const MyComponent = () => {
+  return <div>Hello</div>
+}
+
+// ✅ Good
+export function MyComponent() {
+  return <div>Hello</div>
+}
+```
+
+**2. Using Shadcn UI Components**
+When building atom components, **prioritize using Shadcn UI components first**. If a Shadcn component doesn't exist, create a custom one. Always use the `cn()` utility for merging classes when extending Shadcn components.
 
 ```tsx
 import { cn } from "@/lib/utils"
@@ -307,11 +325,11 @@ export function CustomButton({ className, ...props }: CustomButtonProps) {
 }
 ```
 
-**2. Server Component (Default)**
+**3. Server Component (Default)**
 ```tsx
 // src/app/barbers/page.tsx
 import { getBarbersFromDB } from '@/lib/db/barbers';
-import { BarberCard } from '@/components/organisms/barber-card';
+import { BarberCard } from '@/components/BarberCard/barber-card';
 
 export default async function BarbersPage() {
   const barbers = await getBarbersFromDB();
@@ -326,9 +344,9 @@ export default async function BarbersPage() {
 }
 ```
 
-**3. Client Component (When Needed)**
+**4. Client Component (When Needed)**
 ```tsx
-// src/components/molecules/booking-form.tsx
+// src/components/BookingForm/booking-form.tsx
 'use client';
 
 import { useState } from 'react';
@@ -352,7 +370,7 @@ export function BookingForm() {
 }
 ```
 
-**4. Server Actions for Mutations**
+**5. Server Actions for Mutations**
 ```tsx
 // src/app/actions/booking.ts
 'use server';
@@ -429,89 +447,6 @@ export async function createBooking(formData: FormData) {
 - Implement proper data access controls
 - Don't expose sensitive data in client components
 - Follow GDPR/privacy regulations for customer data
-
----
-
-## Database Schema & Data Models
-
-### Core Entities
-
-**1. Users**
-- `id`: Unique identifier
-- `email`: Email address (unique)
-- `name`: Full name
-- `role`: User role (admin, manager, barber, receptionist, customer)
-- `phone`: Phone number
-- `createdAt`: Account creation timestamp
-- `updatedAt`: Last update timestamp
-
-**2. Barbers** (extends Users)
-- `userId`: Reference to Users table
-- `specialties`: Array of specialties
-- `commissionRate`: Commission percentage
-- `workingHours`: Schedule configuration
-- `rating`: Average customer rating
-- `isActive`: Active status
-
-**3. Customers** (extends Users)
-- `userId`: Reference to Users table
-- `favoriteBarbers`: Array of barber IDs
-- `loyaltyPoints`: Accumulated points
-- `preferences`: Customer preferences and notes
-- `totalSpent`: Lifetime spending
-
-**4. Services**
-- `id`: Unique identifier
-- `name`: Service name
-- `description`: Service description
-- `duration`: Service duration in minutes
-- `price`: Service price
-- `category`: Service category
-- `isActive`: Active status
-
-**5. Bookings**
-- `id`: Unique identifier
-- `customerId`: Reference to customer
-- `barberId`: Reference to barber
-- `serviceId`: Reference to service
-- `startTime`: Appointment start time
-- `endTime`: Appointment end time
-- `status`: Booking status
-- `notes`: Special notes
-- `isWalkIn`: Walk-in flag
-
-**6. Products**
-- `id`: Unique identifier
-- `name`: Product name
-- `description`: Product description
-- `price`: Selling price
-- `cost`: Cost price
-- `stockQuantity`: Current stock
-- `lowStockThreshold`: Alert threshold
-- `category`: Product category
-- `supplierId`: Reference to supplier
-
-**7. Sales**
-- `id`: Unique identifier
-- `productId`: Reference to product
-- `barberId`: Reference to selling barber
-- `customerId`: Reference to customer (optional)
-- `quantity`: Quantity sold
-- `totalPrice`: Total sale price
-- `commission`: Barber commission
-- `saleDate`: Sale timestamp
-
-**8. Salaries**
-- `id`: Unique identifier
-- `barberId`: Reference to barber
-- `period`: Pay period (start-end dates)
-- `baseSalary`: Base salary amount
-- `serviceCommission`: Commission from services
-- `productCommission`: Commission from products
-- `bonuses`: Array of bonuses with reasons
-- `totalAmount`: Total salary
-- `status`: Payment status
-- `paidAt`: Payment timestamp
 
 ---
 
@@ -606,7 +541,7 @@ export async function createBooking(formData: FormData) {
 ```tsx
 // src/app/dashboard/barbers/page.tsx
 import { getBarbersWithStats } from '@/lib/db/barbers';
-import { BarberCard } from '@/components/features/barbers/barber-card';
+import { BarberCard } from '@/components/BarberCard/barber-card';
 
 export default async function BarbersPage() {
   const barbers = await getBarbersWithStats();
@@ -719,16 +654,4 @@ export function Card({ children, className, variant = 'default' }: CardProps) {
 8. **Document complex business logic** with comments
 9. **Test with different user roles** to ensure proper access control
 10. **Keep security in mind** - validate inputs, protect sensitive data
-
----
-
-## Questions to Ask When Uncertain
-
-- What user role should have access to this feature?
-- How should this feature handle errors?
-- What validation rules apply to this data?
-- Should this be a Server or Client Component?
-- How does this affect barber salary calculations?
-- Are there any business rules that constrain this feature?
-- What happens if the user is offline or the request fails?
-- How should this feature work on mobile devices?
+11. **Prioritize Shadcn UI** for atom components before creating custom ones.
