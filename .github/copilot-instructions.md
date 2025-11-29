@@ -291,6 +291,7 @@ export interface Booking {
 
 **1. Prefer Function Components**
 Always use function declarations for components instead of arrow functions assigned to variables.
+If the file contains only one component, export it as the default export.
 
 ```tsx
 // ❌ Bad
@@ -299,7 +300,7 @@ export const MyComponent = () => {
 }
 
 // ✅ Good
-export function MyComponent() {
+export default function MyComponent() {
   return <div>Hello</div>
 }
 ```
