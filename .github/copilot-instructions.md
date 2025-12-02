@@ -498,6 +498,58 @@ export async function createBooking(formData: FormData) {
 - Integration tests for Server Actions
 - E2E tests for critical user flows
 
+**3. Test File Location Guidelines**
+
+When writing tests, follow these rules for test file placement:
+
+**Unit/Integration Tests (Vitest/Jest):**
+- **Location**: Place all test files inside the `tests/` folder inside src folder
+- **Structure**: Mirror the `src/` folder structure
+- **Naming**: Use `.test.ts` or `.test.tsx` suffix for test files
+- **Examples**:
+  - Test for `src/lib/utils.ts` → `src/tests/lib/utils.test.ts`
+  - Test for `src/components/input/icon-input.tsx` → `src/tests/components/input/icon-input.test.tsx`
+  - Test for `src/app/actions/booking.ts` → `src/tests/app/actions/booking.test.ts`
+
+**Storybook Tests (Component Interaction Tests):**
+- **Location**: Place tests inside the corresponding story file using Storybook's `play` function
+- **Structure**: Stories are located in `src/stories/` mirroring component structure
+- **Naming**: Story files use `.stories.tsx` suffix
+- **Examples**:
+  - Interaction tests for `login-form` → Add `play` function in `src/stories/form/login-form.stories.tsx`
+  - Interaction tests for `password-input` → Add `play` function in `src/stories/input/password-input.stories.tsx`
+
+**Storybook Play Function Example:**
+```tsx
+// src/stories/form/login-form.stories.tsx
+import type { Meta, StoryObj } from '@storybook/react';
+import { within, userEvent, expect } from '@storybook/test';
+import { LoginForm } from '@/components/form/login-form';
+
+const meta: Meta<typeof LoginForm> = {
+  component: LoginForm,
+};
+
+export default meta;
+type Story = StoryObj<typeof LoginForm>;
+
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    
+    // Test interactions
+    const emailInput = canvas.getByLabelText(/email/i);
+    await userEvent.type(emailInput, 'test@example.com');
+    
+    const passwordInput = canvas.getByLabelText(/password/i);
+    await userEvent.type(passwordInput, 'password123');
+    
+    const submitButton = canvas.getByRole('button', { name: /login/i });
+    await expect(submitButton).toBeEnabled();
+  },
+};
+```
+
 ### Documentation Standards
 
 **1. Code Comments**
@@ -656,3 +708,4 @@ export function Card({ children, className, variant = 'default' }: CardProps) {
 9. **Test with different user roles** to ensure proper access control
 10. **Keep security in mind** - validate inputs, protect sensitive data
 11. **Prioritize Shadcn UI** for atom components before creating custom ones.
+12. **Test file placement**: Place unit/integration tests in `tests/` folder mirroring `src/` structure. For Storybook component tests, use the `play` function inside the corresponding `.stories.tsx` file in `src/stories/`.
