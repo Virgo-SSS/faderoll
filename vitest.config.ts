@@ -16,7 +16,7 @@ const dirname =
 export default defineConfig({
   test: {
     coverage: {
-      exclude: ["src/components/ui"],
+      exclude: ["src/components/ui", ".storybook"],
     },
     projects: [
       {
