@@ -248,10 +248,6 @@ export interface Booking {
 --foreground: oklch(0.145 0 0);
 --primary: oklch(0.205 0 0);
 --destructive: oklch(0.577 0.245 27.325);
-
-/* Dark Mode (in .dark class) */
---background: oklch(0.145 0 0);
---foreground: oklch(0.985 0 0);
 ```
 
 ### Best Practices
@@ -259,7 +255,7 @@ export interface Booking {
 1. Use utility classes for styling
 2. Create reusable variants with `class-variance-authority`
 3. Use `cn()` utility from `@/lib/utils` for conditional classes
-4. Dark mode via `.dark` class toggle
+4. We won't use dark in this project.
 
 ---
 
