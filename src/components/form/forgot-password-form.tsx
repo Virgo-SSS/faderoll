@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Button } from "@/components/ui/button";
+import LoadingButton from "@/components/button/loading-button";
 import {
   Card,
   CardContent,
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Spinner } from "@/components/ui/spinner";
+
 
 export default function ForgotPasswordForm() {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -79,10 +79,9 @@ export default function ForgotPasswordForm() {
           </div>
         </CardContent>
         <CardFooter className="pt-4">
-          <Button className="w-full" type="submit" disabled={isLoading}>
-            {isLoading && <Spinner className="mr-2" />}
+          <LoadingButton className="w-full" type="submit" isLoading={isLoading}>
             Send Reset Link
-          </Button>
+          </LoadingButton>
         </CardFooter>
       </form>
     </Card>

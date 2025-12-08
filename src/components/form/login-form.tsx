@@ -1,7 +1,7 @@
-"use client";
+'use client'
 
-import * as React from "react";
-import { Button } from "@/components/ui/button";
+import * as React from 'react'
+import LoadingButton from '@/components/button/loading-button'
 import {
   Card,
   CardContent,
@@ -9,54 +9,51 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import PasswordInput from "@/components/input/password-input";
-import { Spinner } from "@/components/ui/spinner";
-import Link from "next/link";
+} from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import PasswordInput from '@/components/input/password-input'
+import Link from 'next/link'
 
 export default function LoginForm() {
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false)
   const [errors, setErrors] = React.useState<{
-    email?: string;
-    password?: string;
-  }>({});
+    email?: string
+    password?: string
+  }>({})
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsLoading(true);
-    setErrors({});
+    event.preventDefault()
+    setIsLoading(true)
+    setErrors({})
 
-    const formData = new FormData(event.currentTarget);
-    const data = Object.fromEntries(formData);
-    console.log("Login data:", data);
+    const formData = new FormData(event.currentTarget)
+    const data = Object.fromEntries(formData)
+    console.log('Login data:', data)
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    if (!data.email || !String(data.email).includes("@")) {
+    if (!data.email || !String(data.email).includes('@')) {
       setErrors((prev) => ({
         ...prev,
-        email: "Please enter a valid email address.",
-      }));
+        email: 'Please enter a valid email address.',
+      }))
     }
     if (!data.password || String(data.password).length < 6) {
       setErrors((prev) => ({
         ...prev,
-        password: "Password must be at least 6 characters.",
-      }));
+        password: 'Password must be at least 6 characters.',
+      }))
     }
 
-    setIsLoading(false);
-  };
+    setIsLoading(false)
+  }
 
   return (
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-2xl">Login</CardTitle>
-        <CardDescription>
-          Enter your email below to login to your account.
-        </CardDescription>
+        <CardDescription>Enter your email below to login to your account.</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="grid gap-4">
@@ -70,11 +67,7 @@ export default function LoginForm() {
               required
               aria-invalid={!!errors.email}
             />
-            {errors.email && (
-              <p className="text-sm font-medium text-destructive">
-                {errors.email}
-              </p>
-            )}
+            {errors.email && <p className="text-destructive text-sm font-medium">{errors.email}</p>}
           </div>
           <div className="grid gap-2">
             <div className="flex items-center">
@@ -93,19 +86,16 @@ export default function LoginForm() {
               aria-invalid={!!errors.password}
             />
             {errors.password && (
-              <p className="text-sm font-medium text-destructive">
-                {errors.password}
-              </p>
+              <p className="text-destructive text-sm font-medium">{errors.password}</p>
             )}
           </div>
         </CardContent>
         <CardFooter className="pt-4">
-          <Button className="w-full" type="submit" disabled={isLoading}>
-            {isLoading && <Spinner className="mr-2" />}
+          <LoadingButton className="w-full" type="submit" isLoading={isLoading}>
             Sign in
-          </Button>
+          </LoadingButton>
         </CardFooter>
       </form>
     </Card>
-  );
+  )
 }

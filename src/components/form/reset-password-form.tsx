@@ -1,7 +1,7 @@
-"use client";
+'use client'
 
-import * as React from "react";
-import { Button } from "@/components/ui/button";
+import * as React from 'react'
+import LoadingButton from '@/components/button/loading-button'
 import {
   Card,
   CardContent,
@@ -9,53 +9,52 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import PasswordInput from "@/components/input/password-input";
-import { Spinner } from "@/components/ui/spinner";
+} from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import PasswordInput from '@/components/input/password-input'
 
 export default function ResetPasswordForm() {
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false)
   const [errors, setErrors] = React.useState<{
-    password?: string;
-    confirmPassword?: string;
-  }>({});
-  const [success, setSuccess] = React.useState(false);
+    password?: string
+    confirmPassword?: string
+  }>({})
+  const [success, setSuccess] = React.useState(false)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsLoading(true);
-    setErrors({});
-    setSuccess(false);
+    event.preventDefault()
+    setIsLoading(true)
+    setErrors({})
+    setSuccess(false)
 
-    const formData = new FormData(event.currentTarget);
-    const data = Object.fromEntries(formData);
+    const formData = new FormData(event.currentTarget)
+    const data = Object.fromEntries(formData)
 
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    let hasError = false;
-    const newErrors: typeof errors = {};
+    let hasError = false
+    const newErrors: typeof errors = {}
 
     // Mock validation
     if (!data.password || String(data.password).length < 6) {
-      newErrors.password = "Password must be at least 6 characters.";
-      hasError = true;
+      newErrors.password = 'Password must be at least 6 characters.'
+      hasError = true
     }
 
     if (data.password !== data.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match.";
-      hasError = true;
+      newErrors.confirmPassword = 'Passwords do not match.'
+      hasError = true
     }
 
     if (hasError) {
-      setErrors(newErrors);
+      setErrors(newErrors)
     } else {
-      setSuccess(true);
+      setSuccess(true)
     }
 
-    setIsLoading(false);
-  };
+    setIsLoading(false)
+  }
 
   return (
     <Card className="w-full">
@@ -76,9 +75,7 @@ export default function ResetPasswordForm() {
               aria-invalid={!!errors.password}
             />
             {errors.password && (
-              <p className="text-sm font-medium text-destructive">
-                {errors.password}
-              </p>
+              <p className="text-destructive text-sm font-medium">{errors.password}</p>
             )}
           </div>
           <div className="grid gap-2">
@@ -90,9 +87,7 @@ export default function ResetPasswordForm() {
               aria-invalid={!!errors.confirmPassword}
             />
             {errors.confirmPassword && (
-              <p className="text-sm font-medium text-destructive">
-                {errors.confirmPassword}
-              </p>
+              <p className="text-destructive text-sm font-medium">{errors.confirmPassword}</p>
             )}
           </div>
           {success && (
@@ -102,12 +97,11 @@ export default function ResetPasswordForm() {
           )}
         </CardContent>
         <CardFooter className="pt-4">
-          <Button className="w-full" type="submit" disabled={isLoading}>
-            {isLoading && <Spinner className="mr-2" />}
+          <LoadingButton className="w-full" type="submit" isLoading={isLoading}>
             Reset Password
-          </Button>
+          </LoadingButton>
         </CardFooter>
       </form>
     </Card>
-  );
+  )
 }
