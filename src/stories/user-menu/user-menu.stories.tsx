@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import UserMenu from '@/components/user-menu/user-menu'
 
 const meta = {
-  title: 'Components/UserMenu',
+  title: 'Components/UserMenu/UserMenu',
   component: UserMenu,
   parameters: {
     layout: 'centered',

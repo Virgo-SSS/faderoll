@@ -1,6 +1,5 @@
 'use client'
 
-import * as React from 'react'
 import Link from 'next/link'
 import { Bell } from 'lucide-react'
 
@@ -19,9 +18,9 @@ export default function Notification({ className }: NotificationProps) {
   return (
     <Button variant="ghost" size="icon" className={cn('relative', className)} asChild>
       <Link href="/notifications">
-        <Bell className="size-5" />
+        <Bell className="size-6" />
         {count > 0 && (
-          <span className="bg-destructive text-destructive-foreground absolute top-1.5 right-1.5 flex size-4 items-center justify-center rounded-full text-[10px] leading-none font-medium">
+          <span className="bg-destructive absolute top-0 right-0 flex size-4 items-center justify-center rounded-full text-[10px] leading-none font-medium text-white">
             {count > 99 ? '99+' : count}
           </span>
         )}

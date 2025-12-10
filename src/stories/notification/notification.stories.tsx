@@ -3,7 +3,7 @@ import { expect, within } from 'storybook/test'
 import Notification from '@/components/notification/notification'
 
 const meta = {
-  title: 'Components/Notification',
+  title: 'Components/Notification/Notification',
   component: Notification,
   parameters: {
     layout: 'centered',
